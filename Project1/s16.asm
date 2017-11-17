@@ -15,7 +15,7 @@ includelib  C:\masm32\lib\msvcrt.lib
 ;include     xyw.asm
 
 ;============================xyw
-;Æå×ÓÎ»ÖÃ½á¹¹Ìå
+;æ£‹å­ä½ç½®ç»“æ„ä½“
 PiecePosition STRUCT
 	Player BYTE 0
 	Id BYTE 0
@@ -23,43 +23,43 @@ PiecePosition STRUCT
 	Position BYTE 0 
 PiecePosition ENDS
 
-;³õÊ¼»¯
+;åˆå§‹åŒ–
 init PROTO
-;½âÎö·¢À´µÄÖ¸Áî
+;è§£æå‘æ¥çš„æŒ‡ä»¤
 parseCommand PROTO				
-;Ëæ»úÊı
+;éšæœºæ•°
 iRand PROTO first:DWORD,second:DWORD
-;·É»úµÄÒÆ¶¯
+;é£æœºçš„ç§»åŠ¨
 moveOneStep PROTO currentPiece:DWORD
 moveOut PROTO currentPiece:DWORD
 jumpAndShortCut PROTO currentPiece:DWORD
 outerKillOtherPlane PROTO currentPiece:DWORD
 shortCutKillOtherPlane PROTO currentPiece:DWORD
 secureNotOnBlock PROTO currentPiece:DWORD
-;²âÊÔÄÜ²»ÄÜ½øĞĞÌøÔ¾ºÍ·ÉÔ¾
+;æµ‹è¯•èƒ½ä¸èƒ½è¿›è¡Œè·³è·ƒå’Œé£è·ƒ
 testShortCut PROTO currentPiece:DWORD
 testJump PROTO currentPiece:DWORD
-;²âÊÔÓĞÎŞ×Ó¿ÉÒÔ×ß
+;æµ‹è¯•æœ‰æ— å­å¯ä»¥èµ°
 testCanMove PROTO
-;×ª»»ÒÆ¶¯µÄ·½Ïò
+;è½¬æ¢ç§»åŠ¨çš„æ–¹å‘
 changeDirection PROTO
-;²é¿´µ±Ç°Î»ÖÃÊÇ²»ÊÇÓĞÇ½		
+;æŸ¥çœ‹å½“å‰ä½ç½®æ˜¯ä¸æ˜¯æœ‰å¢™		
 checkBlock PROTO currentPiece:DWORD
-;²é¿´µ±Ç°²Ù×÷·É»úÊÇ²»ÊÇ×ßµ½ÁËÖÕµã
+;æŸ¥çœ‹å½“å‰æ“ä½œé£æœºæ˜¯ä¸æ˜¯èµ°åˆ°äº†ç»ˆç‚¹
 checkIntoDestination PROTO currentPiece:DWORD
-;·ÅÏÂµ±Ç°Î»ÖÃµÄ·É»ú
+;æ”¾ä¸‹å½“å‰ä½ç½®çš„é£æœº
 setCurrentPlane PROTO currentPiece:DWORD
-;ÄÃÆğµ±Ç°Î»ÖÃµÄ·É»ú
+;æ‹¿èµ·å½“å‰ä½ç½®çš„é£æœº
 pickCurrentPlane PROTO currentPiece:DWORD
-;×éÖ¯·µ»ØµÄĞÅÏ¢
+;ç»„ç»‡è¿”å›çš„ä¿¡æ¯
 composeBuffer PROTO currentPiece:DWORD
-;´¦ÀíĞÅÏ¢µÄÖ÷º¯Êı
+;å¤„ç†ä¿¡æ¯çš„ä¸»å‡½æ•°
 processCommand PROTO
-;»»³ÉÏÂÒ»¸öÍæ¼Ò
+;æ¢æˆä¸‹ä¸€ä¸ªç©å®¶
 nextPlayer PROTO
-;¼ì²éÊÇ²»ÊÇÒ»·½ÊÇ²»ÊÇÒÑ¾­Ê¤Àû dl = 1 µ±Ç°Íæ¼ÒÊ¤Àû dl = 0 µ±Ç°Íæ¼ÒÉĞÎ´Ê¤Àû
+;æ£€æŸ¥æ˜¯ä¸æ˜¯ä¸€æ–¹æ˜¯ä¸æ˜¯å·²ç»èƒœåˆ© dl = 1 å½“å‰ç©å®¶èƒœåˆ© dl = 0 å½“å‰ç©å®¶å°šæœªèƒœåˆ©
 testWin PROTO currentPiece:DWORD
-;×éÖ¯Ê¤ÀûµÄĞÅÏ¢
+;ç»„ç»‡èƒœåˆ©çš„ä¿¡æ¯
 composeWinBuffer PROTO 	
 ;============================xyw
 
@@ -78,28 +78,29 @@ _ConsoleMain PROTO
 _wsaVersion         EQU 0101h ; 0101h for Ver 1.1, or 0002h for Ver 2.0
 PORT                EQU 9999
 MAX_SOCK            EQU 1
+SLEEP_TIME          EQU 300
 ;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<sgy
 
 .data
 
 ;============================xyw
 endl EQU <0dh,0ah>
-;½ÓÊÕµÄÏûÏ¢ºÍ·¢ËÍµÄÏûÏ¢
+;æ¥æ”¶çš„æ¶ˆæ¯å’Œå‘é€çš„æ¶ˆæ¯
 ;buffer BYTE 50 DUP(0)
 
-;Ò»´Î²Ù×÷µÄÖ¸ÁîºÍ²Ù×÷Êı
+;ä¸€æ¬¡æ“ä½œçš„æŒ‡ä»¤å’Œæ“ä½œæ•°
 verb BYTE 0
 operand BYTE 0
 
-;ÆåÅÌĞÅÏ¢¼ÇÂ¼
-chessBoard PiecePosition 16 DUP(<>)		;ÆåÅÌÉÏËùÓĞ·É»úµÄĞÅÏ¢
-currentPlayer DWORD 0					;µ±Ç°²Ù×÷µÄÍæ¼ÒºÅ 
-currentPlane DWORD 0					;µ±Ç°²Ù×÷µÄ·É»úºÅ
-currentStep DWORD 0						;µ±Ç°ÈÓ³öµÄ÷»×ÓÊı
-currentDirection DWORD 0				;µ±Ç°·½Ïò 0 ÏòÇ° 1 Ïòºó
-outerLanePlaneCount BYTE 52 DUP(0)		;µ±Ç°ÍâÈ¦µÄÃ¿¸ö¸ñ×ÓÓĞ¶àÉÙ¼Ü·É»ú
-outerLanePlanePlayer BYTE 52 DUP(-1)	;µ±Ç°ÍâÈ¦Ã¿¸ö¸ñ×ÓµÄËùÊôÍæ¼ÒºÅ
-innerLanePlaneCount BYTE 24 DUP(0)		;µ±Ç°ÄÚÈ¦µÄÃ¿¸ö¸ñ×ÓÓĞ¶àÉÙ¼Ü·É»ú
+;æ£‹ç›˜ä¿¡æ¯è®°å½•
+chessBoard PiecePosition 16 DUP(<>)		;æ£‹ç›˜ä¸Šæ‰€æœ‰é£æœºçš„ä¿¡æ¯
+currentPlayer DWORD 0					;å½“å‰æ“ä½œçš„ç©å®¶å· 
+currentPlane DWORD 0					;å½“å‰æ“ä½œçš„é£æœºå·
+currentStep DWORD 0						;å½“å‰æ‰”å‡ºçš„éª°å­æ•°
+currentDirection DWORD 0				;å½“å‰æ–¹å‘ 0 å‘å‰ 1 å‘å
+outerLanePlaneCount BYTE 52 DUP(0)		;å½“å‰å¤–åœˆçš„æ¯ä¸ªæ ¼å­æœ‰å¤šå°‘æ¶é£æœº
+outerLanePlanePlayer BYTE 52 DUP(-1)	;å½“å‰å¤–åœˆæ¯ä¸ªæ ¼å­çš„æ‰€å±ç©å®¶å·
+innerLanePlaneCount BYTE 24 DUP(0)		;å½“å‰å†…åœˆçš„æ¯ä¸ªæ ¼å­æœ‰å¤šå°‘æ¶é£æœº
 ;============================xyw
 
 
@@ -111,8 +112,10 @@ _sockList DWORD 4 DUP(0)
 _sbuf BYTE 10 DUP(0)
 _rbuf BYTE 10 DUP(0)
 _rollAgain BYTE 0
+_maxSock BYTE 0
 _prepareFormat BYTE "Player [%d] ready.", 0dh, 0ah, 0
 _connectFormat BYTE "Player [%d] connected.", 0dh, 0ah, 0
+_inputFormat BYTE "%c", 0
 _sendDisplayFormat BYTE "Send [%s]", 0dh, 0ah, 0
 _recvDisplayFormat BYTE "Receive [%s]", 0dh, 0ah, 0
 
@@ -121,18 +124,18 @@ _recvDisplayFormat BYTE "Receive [%s]", 0dh, 0ah, 0
 canMoveFlag BYTE 1
 .code
 init PROC USES ecx eax ebx esi
-	;µ±Ç°µÄÍæ¼ÒºÅ(k)
+	;å½“å‰çš„ç©å®¶å·(k)
 	mov al,0
-	;µ±Ç°µÄ·É»úºÅ()
+	;å½“å‰çš„é£æœºå·()
 	mov bl,0
 
-	;µ±Ç°²Ù×÷µÄ½á¹¹ÌåĞòºÅ
+	;å½“å‰æ“ä½œçš„ç»“æ„ä½“åºå·
 	mov esi,OFFSET chessBoard
 L1:
 	mov [esi].PiecePosition.Player,al
 	mov [esi].PiecePosition.Id,bl
 	mov [esi].PiecePosition.Lane,0
-	;µ±Ç°Î»ÖÃ=4k~4k+3
+	;å½“å‰ä½ç½®=4k~4k+3
 	mov [esi].PiecePosition.Position,al
 	mov ecx,3
 AddLoop:
@@ -140,9 +143,9 @@ AddLoop:
 	loop AddLoop
 	add [esi].PiecePosition.Position,bl
 
-	;ÏÂÒ»¸ö½á¹¹Ìå
+	;ä¸‹ä¸€ä¸ªç»“æ„ä½“
 	add esi,SIZEOF PiecePosition
-	;al,blµÄ¸üĞÂ
+	;al,blçš„æ›´æ–°
 	.if (bl == 3)
 		.if (al == 3)
 			jmp QL1
@@ -175,7 +178,7 @@ parseCommand PROC USES eax
 	ret
 parseCommand ENDP
 
-;eaxÎª×îºóµÄËæ»úÊı
+;eaxä¸ºæœ€åçš„éšæœºæ•°
 iRand PROC USES ecx edx first:DWORD,second:DWORD
 	invoke GetTickCount
 	mov ecx,13
@@ -192,11 +195,11 @@ iRand PROC USES ecx edx first:DWORD,second:DWORD
 	ret
 iRand ENDP
 
-;Ç°½øÒ»²½
+;å‰è¿›ä¸€æ­¥
 moveOneStep PROC USES eax esi currentPiece:DWORD
 	mov esi,currentPiece
 	.if ([esi].PiecePosition.Lane == 1)
-		;×ßµ½×Ô¼ºµÄµÚÒ»¸ö¸ñ×ÓÖĞ
+		;èµ°åˆ°è‡ªå·±çš„ç¬¬ä¸€ä¸ªæ ¼å­ä¸­
 		mov [esi].PiecePosition.Lane,2
 		mov al,13
 		mul [esi].PiecePosition.Player
@@ -207,18 +210,20 @@ moveOneStep PROC USES eax esi currentPiece:DWORD
 			mov al,13
 			mul [esi].PiecePosition.Player
 			.if ([esi].PiecePosition.Position == al)
-				;¸Ã×ßÈëÄÚÈ¦
+				;è¯¥èµ°å…¥å†…åœˆ
 				mov [esi].PiecePosition.Lane,3
 				mov [esi].PiecePosition.Position,0
+                mov ah,[esi].PiecePosition.Player
+                add [esi].PiecePosition.Position,ah
 			.else
-				;ÔÚÍâÈ¦Ç°½øÒ»¸ñ
+				;åœ¨å¤–åœˆå‰è¿›ä¸€æ ¼
 				add [esi].PiecePosition.Position,1
 				.if ([esi].PiecePosition.Position >= 52)
 					sub [esi].PiecePosition.Position,52
 				.endif
 			.endif
 		.else
-			;ÔÚÍâÈ¦ºóÍËÒ»¸ñ
+			;åœ¨å¤–åœˆåé€€ä¸€æ ¼
 			sub [esi].PiecePosition.Position,1
 			.if ([esi].PiecePosition.Position >= 200) ;<0
 				add [esi].PiecePosition.Position,52
@@ -236,23 +241,23 @@ moveOneStep PROC USES eax esi currentPiece:DWORD
 			sub [esi].PiecePosition.Position,4
 		.endif
 	.endif
-	;×éÖ¯bufferµÄĞÅÏ¢
+	;ç»„ç»‡bufferçš„ä¿¡æ¯
 	invoke composeBuffer,currentPiece
 	ret
 moveOneStep ENDP
 
-;ÒÆ³ö¸ÛÇø
+;ç§»å‡ºæ¸¯åŒº
 moveOut PROC USES eax esi currentPiece:DWORD
 	mov esi,currentPiece
 	mov [esi].PiecePosition.Lane,1
 	mov al,[esi].PiecePosition.Player
 	mov [esi].PiecePosition.Position,al
-	;×éÖ¯bufferµÄĞÅÏ¢
+	;ç»„ç»‡bufferçš„ä¿¡æ¯
 	invoke composeBuffer, currentPiece
 	ret 
 moveOut ENDP
 
-;²âÊÔÓĞÃ»ÓĞ·É»ú¿ÉÒÔ×ß dl = 1 ÓĞµÄ¿ÉÒÔ×ß dl = 0 ÎŞ¿É×ß
+;æµ‹è¯•æœ‰æ²¡æœ‰é£æœºå¯ä»¥èµ° dl = 1 æœ‰çš„å¯ä»¥èµ° dl = 0 æ— å¯èµ°
 testCanMove PROC USES ecx esi
     mov dl,0
     .if currentStep == 6
@@ -264,11 +269,11 @@ testCanMove PROC USES ecx esi
     mov ecx,currentPlayer
     .if ecx > 0
     L1:
-        add esi,SIZEOF PiecePosition
+        add esi,SIZEOF PiecePosition * 4
         loop L1
     .endif
     
-    ;esiÎªµ±Ç°Íæ¼ÒµÚÒ»¸ö·É»úµÄÎ»ÖÃ
+    ;esiä¸ºå½“å‰ç©å®¶ç¬¬ä¸€ä¸ªé£æœºçš„ä½ç½®
     mov ecx,4
 checkLoop:
     .if ([esi].PiecePosition.Lane != 0 && [esi].PiecePosition.Lane != 4)
@@ -276,19 +281,19 @@ checkLoop:
         jmp Quit
     .endif
     add esi,SIZEOF PiecePosition
-    ;ÏÂÒ»¸ö·É»ú
+    ;ä¸‹ä¸€ä¸ªé£æœº
     loop checkLoop
 
 Quit:
     ret
 testCanMove ENDP
 
-;²âÊÔÊÇ²»ÊÇ¿ÉÒÔ½øĞĞ·ÉÔ¾ ¿ÉÒÔ·ÉÔ¾ dl = 1 ²»¿ÉÒÔ·ÉÔ¾ dl = 0
+;æµ‹è¯•æ˜¯ä¸æ˜¯å¯ä»¥è¿›è¡Œé£è·ƒ å¯ä»¥é£è·ƒ dl = 1 ä¸å¯ä»¥é£è·ƒ dl = 0
 testShortCut PROC USES eax ebx ecx esi edi currentPiece:DWORD
 	mov esi,currentPiece	
 	mov dl,1
 
-	;eaxÎªÍâÈ¦·ÉÔ¾µ½µÄindex
+	;eaxä¸ºå¤–åœˆé£è·ƒåˆ°çš„index
 	mov edi,OFFSET outerLanePlaneCount
 	mov ebx,OFFSET outerLanePlanePlayer
 	mov eax,0
@@ -299,19 +304,19 @@ testShortCut PROC USES eax ebx ecx esi edi currentPiece:DWORD
 		sub al,52
 	.endif
 
-	;ediÍâÈ¦¶ÔÓ¦Î»ÖÃ·É»ú¸öÊı ebxÍâÈ¦¶ÔÓ¦Î»ÖÃÍæ¼ÒÑÕÉ«
+	;ediå¤–åœˆå¯¹åº”ä½ç½®é£æœºä¸ªæ•° ebxå¤–åœˆå¯¹åº”ä½ç½®ç©å®¶é¢œè‰²
 	add edi,eax
 	add ebx,eax
 
 
-	;clÎªµ±Ç°²Ù×÷·É»úµÄÑÕÉ«
+	;clä¸ºå½“å‰æ“ä½œé£æœºçš„é¢œè‰²
 	mov cl,[esi].PiecePosition.Player
 	.if (BYTE PTR [edi] >= 2 && cl != BYTE PTR [ebx]) 
 		mov dl,0
 		jmp Quit
 	.endif
 
-	;eaxÎª·ÉÔ¾¹ı³ÌÖĞ¾­¹ıµÄÄÚÈ¦index
+	;eaxä¸ºé£è·ƒè¿‡ç¨‹ä¸­ç»è¿‡çš„å†…åœˆindex
 	mov edi,OFFSET innerLanePlaneCount
 	mov eax,0
 	mov al,[esi].PiecePosition.Player
@@ -321,7 +326,7 @@ testShortCut PROC USES eax ebx ecx esi edi currentPiece:DWORD
 	.endif
 	add al,8
 	
-	;ediÄÚÈ¦¶ÔÓ¦Î»ÖÃ·É»ú¸öÊı 
+	;ediå†…åœˆå¯¹åº”ä½ç½®é£æœºä¸ªæ•° 
 	add edi,eax
 
 
@@ -334,13 +339,13 @@ Quit:
 	ret 
 testShortCut ENDP
 
-;²âÊÔÊÇ²»ÊÇ½øĞĞÌøÔ¾4¸ñ ¿ÉÒÔÌøÔ¾ dl = 1 ²»¿ÉÒÔÌøÔ¾ dl = 0
+;æµ‹è¯•æ˜¯ä¸æ˜¯è¿›è¡Œè·³è·ƒ4æ ¼ å¯ä»¥è·³è·ƒ dl = 1 ä¸å¯ä»¥è·³è·ƒ dl = 0
 testJump PROC USES eax ebx ecx esi edi currentPiece:DWORD
 	mov esi,currentPiece
 	mov dl,1
 
-	mov ecx,4	;¼ì²é4¸ö¸ñ	
-	;eaxÎªÍâÈ¦ÌøÔ¾Ê± ±éÀúµ½µÄindex
+	mov ecx,4	;æ£€æŸ¥4ä¸ªæ ¼	
+	;eaxä¸ºå¤–åœˆè·³è·ƒæ—¶ éå†åˆ°çš„index
 	mov eax,0
 	mov al,[esi].PiecePosition.Position	
 L1: 
@@ -352,12 +357,12 @@ L1:
 
 	mov edi,OFFSET outerLanePlaneCount
 	mov ebx,OFFSET outerLanePlanePlayer
-	;ediÍâÈ¦¶ÔÓ¦Î»ÖÃ·É»ú¸öÊı ebxÍâÈ¦¶ÔÓ¦Î»ÖÃÍæ¼ÒÑÕÉ«
+	;ediå¤–åœˆå¯¹åº”ä½ç½®é£æœºä¸ªæ•° ebxå¤–åœˆå¯¹åº”ä½ç½®ç©å®¶é¢œè‰²
 	add edi,eax
 	add ebx,eax
 
 	mov dl,1
-	;clÎªµ±Ç°²Ù×÷·É»úµÄÑÕÉ«
+	;clä¸ºå½“å‰æ“ä½œé£æœºçš„é¢œè‰²
 	mov dh,[esi].PiecePosition.Player
 	.if (BYTE PTR [edi] >= 2 && dh != BYTE PTR [ebx]) 
 		mov dl,0
@@ -371,7 +376,7 @@ testJump ENDP
 
 
 
-;²âÊÔÌøÔ¾»òÕß·ÉÔ¾
+;æµ‹è¯•è·³è·ƒæˆ–è€…é£è·ƒ
 jumpAndShortCut PROC USES eax ebx ecx edx esi currentPiece:DWORD
 	mov esi,currentPiece
 
@@ -383,7 +388,7 @@ jumpAndShortCut PROC USES eax ebx ecx edx esi currentPiece:DWORD
         jmp Quit
     .endif
 
-	;bl = (13*Íæ¼ÒºÅ + 20) % 52
+	;bl = (13*ç©å®¶å· + 20) % 52
 	mov al,13
 	mul [esi].PiecePosition.Player
 	add al,20
@@ -410,43 +415,43 @@ jumpAndShortCut PROC USES eax ebx ecx edx esi currentPiece:DWORD
 	
 	mov cl,al
 
-	;²ÈÌ¤ÍâÈ¦µÄ·É»ú
+	;è¸©è¸å¤–åœˆçš„é£æœº
 	invoke outerKillOtherPlane,esi
 L1:
 	.if (bl == [esi].PiecePosition.Position)
-		;²âÊÔÄÜ²»ÄÜ·ÉÔ¾
+		;æµ‹è¯•èƒ½ä¸èƒ½é£è·ƒ
 		invoke testShortCut,esi
 		.if dl == 0
 			jmp Quit
 		.endif
-		;·ÉÔ¾12¸ñ
+		;é£è·ƒ12æ ¼
 		add [esi].PiecePosition.Position,12
 		.if [esi].PiecePosition.Position >= 52 
 			sub [esi].PiecePosition.Position,52
 		.endif
 
-		;×éÖ¯bufferµÄĞÅÏ¢ 
+		;ç»„ç»‡bufferçš„ä¿¡æ¯ 
 		invoke composeBuffer,esi
-		;·ÉÔ¾´İ»Ù·É»ú
+		;é£è·ƒæ‘§æ¯é£æœº
 		invoke shortCutKillOtherPlane,esi
-		;²ÈÌ¤ÍâÈ¦µÄ·É»ú
+		;è¸©è¸å¤–åœˆçš„é£æœº
 		invoke outerKillOtherPlane,esi
 	.elseif (bh == 0 && DWORD PTR [ebp - 4] == 0 && cl!=[esi].PiecePosition.Position)
 		mov DWORD PTR [ebp - 4],1
-		;²âÊÔÄÜ²»ÄÜÌøÔ¾
+		;æµ‹è¯•èƒ½ä¸èƒ½è·³è·ƒ
 		invoke testJump,esi
 		.if dl == 0
 			jmp Quit
 		.endif
-		;ÌøÔ¾4¸ñ
+		;è·³è·ƒ4æ ¼
 		add [esi].PiecePosition.Position,4
 		.if ([esi].PiecePosition.Position >= 52)
 			sub [esi].PiecePosition.Position,52
 		.endif
 
-		;×éÖ¯bufferµÄĞÅÏ¢ 
+		;ç»„ç»‡bufferçš„ä¿¡æ¯ 
 		invoke composeBuffer,esi
-		;²ÈÌ¤ÍâÈ¦µÄ·É»ú
+		;è¸©è¸å¤–åœˆçš„é£æœº
 		invoke outerKillOtherPlane,esi
 	.else
 		jmp Quit
@@ -465,44 +470,44 @@ outerKillOtherPlane PROC USES eax ebx edx esi edi currentPiece:DWORD
 	mov edx,OFFSET outerLanePlanePlayer
 
 
-	;Èç¹ûÕâ¸öÎ»ÖÃ²»ÊÇÍâÈ¦ Ö±½ÓÍË³ö
+	;å¦‚æœè¿™ä¸ªä½ç½®ä¸æ˜¯å¤–åœˆ ç›´æ¥é€€å‡º
 	.if [esi].PiecePosition.Lane != 2
 		jmp Quit
 	.endif
 
-	;eaxÎªÍâÈ¦µÄindex
+	;eaxä¸ºå¤–åœˆçš„index
 	mov eax,0
 	mov al,[esi].PiecePosition.Position
-	;ediÍâÈ¦¶ÔÓ¦Î»ÖÃ·É»ú¸öÊı edxÍâÈ¦¶ÔÓ¦Î»ÖÃÍæ¼ÒÑÕÉ«
+	;ediå¤–åœˆå¯¹åº”ä½ç½®é£æœºä¸ªæ•° edxå¤–åœˆå¯¹åº”ä½ç½®ç©å®¶é¢œè‰²
 	add edi,eax
 	add edx,eax
 
-	.if (BYTE PTR [edi] >= 2 || BYTE PTR [edi] == 0)	;Èç¹û¶ÔÓ¦Î»ÖÃ·É»ú¸öÊıÎª0 »òÕß ¸öÊı¶àÓÚ2 Ã»ÓĞ²Èµ½ÆäËû·É»ú
+	.if (BYTE PTR [edi] >= 2 || BYTE PTR [edi] == 0)	;å¦‚æœå¯¹åº”ä½ç½®é£æœºä¸ªæ•°ä¸º0 æˆ–è€… ä¸ªæ•°å¤šäº2 æ²¡æœ‰è¸©åˆ°å…¶ä»–é£æœº
 		jmp Quit 
-	.elseif ;BYTE PTR [edi] == 1
-		;²Ù×÷·É»úµÄÍæ¼ÒÑÕÉ«
+	.else ;BYTE PTR [edi] == 1
+		;æ“ä½œé£æœºçš„ç©å®¶é¢œè‰²
 		mov bl,[esi].PiecePosition.Player
 		.if bl != BYTE PTR [edx]
 			mov ecx,0
-			;Èç¹ûÊÇ±ğµÄÑÕÉ«µÄ1¼Ü·É»ú ËüĞèÒªÍË»Ø¼Ò
+			;å¦‚æœæ˜¯åˆ«çš„é¢œè‰²çš„1æ¶é£æœº å®ƒéœ€è¦é€€å›å®¶
 			mov cl,BYTE PTR [edx]
-			;±éÀúÕâ¸öÆåÅÌÆå×ÓĞÅÏ¢À´ÕÒµ½Õâ¸öÆå×Ó
+			;éå†è¿™ä¸ªæ£‹ç›˜æ£‹å­ä¿¡æ¯æ¥æ‰¾åˆ°è¿™ä¸ªæ£‹å­
 			mov esi,OFFSET chessBoard
 
-			;ÕÒµ½Õâ¸öÑÕÉ«µÄÎ»ÖÃ
+			;æ‰¾åˆ°è¿™ä¸ªé¢œè‰²çš„ä½ç½®
 			.if ecx > 0 
 L1:
 				add esi,SIZEOF PiecePosition * 4
 				loop L1
 			.endif
 
-			;±éÀúÕâ¸öÍæ¼ÒµÄËùÓĞ·É»ú
+			;éå†è¿™ä¸ªç©å®¶çš„æ‰€æœ‰é£æœº
 			mov ecx,4
 Lcheck:
 			.if ([esi].PiecePosition.Lane == 2 && al == [esi].PiecePosition.Position)
 				mov [esi].PiecePosition.Lane,0
 				mov bl,[esi].PiecePosition.Player
-				;Õâ¸ö·É»úµÄÎ»ÖÃÊÇ 4 Player + Id
+				;è¿™ä¸ªé£æœºçš„ä½ç½®æ˜¯ 4 Player + Id
 				mov [esi].PiecePosition.Position,bl
 				add [esi].PiecePosition.Position,bl
 				add [esi].PiecePosition.Position,bl
@@ -511,14 +516,13 @@ Lcheck:
 				mov bl,[esi].PiecePosition.Id
 				add [esi].PiecePosition.Position,bl
 
-				;×éÖ¯²¢·¢³öĞÅÏ¢
+				;ç»„ç»‡å¹¶å‘å‡ºä¿¡æ¯
 				invoke composeBuffer,esi
 
 				jmp Quit
 			.endif
+            add esi, SIZEOF PiecePosition
 			loop Lcheck
-
-
 		.endif
 	.endif
 
@@ -529,7 +533,7 @@ outerKillOtherPlane ENDP
 shortCutKillOtherPlane PROC USES eax ebx ecx esi edi currentPiece:DWORD
 	mov esi,currentPiece
 	mov edi,OFFSET innerLanePlaneCount
-	;alÎª·ÉÔ¾µÄÍæ¼ÒµÄÑÕÉ«
+	;alä¸ºé£è·ƒçš„ç©å®¶çš„é¢œè‰²
 	mov eax,0
 	mov al,[esi].PiecePosition.Player
 
@@ -540,12 +544,12 @@ shortCutKillOtherPlane PROC USES eax ebx ecx esi edi currentPiece:DWORD
 
 	add al,8
 	
-	;¶ÔÃæÍæ¼ÒÄÚÈ¦Î»ÖÃµÄ·É»ú¸öÊı
+	;å¯¹é¢ç©å®¶å†…åœˆä½ç½®çš„é£æœºä¸ªæ•°
 	add edi,eax
 	.if BYTE PTR [edi] == 1
-		;Èç¹ûÖ»ÓĞÒ»¼Ü·É»ú£¬ÍË»Ø¼Ò
+		;å¦‚æœåªæœ‰ä¸€æ¶é£æœºï¼Œé€€å›å®¶
 		
-		;alÎªÄÇ¸öÍæ¼ÒµÄÑÕÉ«
+		;alä¸ºé‚£ä¸ªç©å®¶çš„é¢œè‰²
 		sub al,8
 
 		mov ecx,0
@@ -558,16 +562,16 @@ L1:
 			loop L1
 		.endif
 
-		;±éÀúÕâ¸öÍæ¼ÒµÄËùÓĞ·É»ú
+		;éå†è¿™ä¸ªç©å®¶çš„æ‰€æœ‰é£æœº
 		mov ecx,4
-		;alÎªÄÇ¸ö¸ñ×ÓµÄÎ»ÖÃ
+		;alä¸ºé‚£ä¸ªæ ¼å­çš„ä½ç½®
 		add al,8
 		checkLoop:
 			.if ([esi].PiecePosition.Lane == 3 && al == [esi].PiecePosition.Position)
-				;½«Õâ¸ö·É»úÍË»Ø»ùµØ
+				;å°†è¿™ä¸ªé£æœºé€€å›åŸºåœ°
 				mov [esi].PiecePosition.Lane,0
 				mov bl,[esi].PiecePosition.Player
-				;Õâ¸ö·É»úµÄÎ»ÖÃÊÇ 4 Player + Id
+				;è¿™ä¸ªé£æœºçš„ä½ç½®æ˜¯ 4 Player + Id
 				mov [esi].PiecePosition.Position,bl
 				add [esi].PiecePosition.Position,bl
 				add [esi].PiecePosition.Position,bl
@@ -576,7 +580,7 @@ L1:
 				mov bl,[esi].PiecePosition.Id
 				add [esi].PiecePosition.Position,bl
 
-				;×éÖ¯²¢·¢³öĞÅÏ¢
+				;ç»„ç»‡å¹¶å‘å‡ºä¿¡æ¯
 				invoke composeBuffer,esi
 
 				jmp Quit
@@ -601,22 +605,22 @@ changeDirection ENDP
 
 secureNotOnBlock PROC USES eax ebx edx edi esi currentPiece:DWORD
 	mov esi,currentPiece
-	;ediÎªÍâÈ¦µÄ·É»ú¸öÊı edxÎªÍâÈ¦µÄ·É»úµÄÑÕÉ«
+	;ediä¸ºå¤–åœˆçš„é£æœºä¸ªæ•° edxä¸ºå¤–åœˆçš„é£æœºçš„é¢œè‰²
 	mov edi,OFFSET outerLanePlaneCount
 	mov edx,OFFSET outerLanePlanePlayer
 
 	mov eax,0
 	mov al,[esi].PiecePosition.Position
 
-	;ediÎªÍâÈ¦¶ÔÓ¦Î»ÖÃµÄ·É»ú¸öÊı edxÎªÍâÈ¦¶ÔÓ¦Î»ÖÃµÄ·É»úµÄÑÕÉ«
+	;ediä¸ºå¤–åœˆå¯¹åº”ä½ç½®çš„é£æœºä¸ªæ•° edxä¸ºå¤–åœˆå¯¹åº”ä½ç½®çš„é£æœºçš„é¢œè‰²
 	add edi,eax
 	add edx,eax
 
 	.if [esi].PiecePosition.Lane == 2
-		;Óöµ½ÆäËûÍæ¼ÒµÄÇ½
+		;é‡åˆ°å…¶ä»–ç©å®¶çš„å¢™
 		mov bl,[esi].PiecePosition.Player
 		.if (BYTE PTR [edi] >= 2 && bl != BYTE PTR [edx])
-			;ÒÆ¶¯Ò»²½£¬´ÓÇ½ÉÏ×ßÏÂÀ´
+			;ç§»åŠ¨ä¸€æ­¥ï¼Œä»å¢™ä¸Šèµ°ä¸‹æ¥
 			invoke moveOneStep,esi
 		.endif
 	.endif
@@ -625,22 +629,22 @@ secureNotOnBlock ENDP
 
 checkBlock PROC USES eax ebx ecx edx edi esi currentPiece:DWORD
 	mov esi,currentPiece
-	;ediÎªÍâÈ¦µÄ·É»ú¸öÊı edxÎªÍâÈ¦µÄ·É»úµÄÑÕÉ«
+	;ediä¸ºå¤–åœˆçš„é£æœºä¸ªæ•° edxä¸ºå¤–åœˆçš„é£æœºçš„é¢œè‰²
 	mov edi,OFFSET outerLanePlaneCount
 	mov edx,OFFSET outerLanePlanePlayer
 
 	mov eax,0
 	mov al,[esi].PiecePosition.Position
 
-	;ediÎªÍâÈ¦¶ÔÓ¦Î»ÖÃµÄ·É»ú¸öÊı edxÎªÍâÈ¦¶ÔÓ¦Î»ÖÃµÄ·É»úµÄÑÕÉ«
+	;ediä¸ºå¤–åœˆå¯¹åº”ä½ç½®çš„é£æœºä¸ªæ•° edxä¸ºå¤–åœˆå¯¹åº”ä½ç½®çš„é£æœºçš„é¢œè‰²
 	add edi,eax
 	add edx,eax
 
 	.if [esi].PiecePosition.Lane == 2
-		;Óöµ½ÆäËûÍæ¼ÒµÄÇ½
+		;é‡åˆ°å…¶ä»–ç©å®¶çš„å¢™
 		mov bl,[esi].PiecePosition.Player
 		.if (BYTE PTR [edi] >= 2 && bl != BYTE PTR [edx])
-			call changeDirection	;×ª»»·½Ïò
+			call changeDirection	;è½¬æ¢æ–¹å‘
 		.endif
 	.endif
 	ret 
@@ -653,12 +657,12 @@ checkIntoDestination PROC USES eax esi currentPiece:DWORD
 	add al,20
 
 	.if (al==[esi].PiecePosition.Position && [esi].PiecePosition.Lane == 3)
-		; µ±Ç°·É»úµÄº½µÀÀà±ğ = 4
+		; å½“å‰é£æœºçš„èˆªé“ç±»åˆ« = 4
 		mov [esi].PiecePosition.Lane,4
-		; µ±Ç°·É»úµÄÎ»ÖÃ = Íæ¼ÒºÅ
+		; å½“å‰é£æœºçš„ä½ç½® = ç©å®¶å·
 		sub [esi].PiecePosition.Position,20
 
-        ;·¢ËÍÏûÏ¢
+        ;å‘é€æ¶ˆæ¯
         invoke composeBuffer,esi
 	.endif
 
@@ -670,10 +674,10 @@ pickCurrentPlane PROC USES eax edx edi esi currentPiece:DWORD
 	.if ([esi].PiecePosition.Lane == 2)	
 		mov edi,OFFSET outerLanePlaneCount
 		mov edx,OFFSET outerLanePlanePlayer
-		;¼ÓÔØµ±Ç°·É»úµÄPosition
+		;åŠ è½½å½“å‰é£æœºçš„Position
 		mov eax,0
 		mov al,[esi].PiecePosition.Position
-		;ediÎªÍâÈ¦¼ÇÂ¼µÄ¶ÔÓ¦Î»ÖÃ edxÎªÄÇ¸öÎ»ÖÃµÄÑÕÉ«
+		;ediä¸ºå¤–åœˆè®°å½•çš„å¯¹åº”ä½ç½® edxä¸ºé‚£ä¸ªä½ç½®çš„é¢œè‰²
 		add edi,eax
 		add edx,eax
 		.if (BYTE PTR [edi] == 1)
@@ -684,13 +688,13 @@ pickCurrentPlane PROC USES eax edx edi esi currentPiece:DWORD
 		.endif
 	.elseif ([esi].PiecePosition.Lane == 3)
 		mov edi,OFFSET innerLanePlaneCount
-		;¼ÓÔØµ±Ç°·É»úµÄPosition
+		;åŠ è½½å½“å‰é£æœºçš„Position
 		mov eax,0
 		mov al,[esi].PiecePosition.Position
-		;ediÎªÍâÈ¦¼ÇÂ¼µÄ¶ÔÓ¦Î»ÖÃ edxÎªÄÇ¸öÎ»ÖÃµÄÑÕÉ«
+		;ediä¸ºå¤–åœˆè®°å½•çš„å¯¹åº”ä½ç½® edxä¸ºé‚£ä¸ªä½ç½®çš„é¢œè‰²
 		add edi,eax
 
-		;¶ÔÓ¦Î»ÖÃ¸öÊı-1
+		;å¯¹åº”ä½ç½®ä¸ªæ•°-1
 		sub BYTE PTR [edi],1	
 	.endif
 	ret 
@@ -702,16 +706,16 @@ setCurrentPlane PROC USES eax edx edi esi currentPiece:DWORD
 	.if ([esi].PiecePosition.Lane == 2)	
 		mov edi,OFFSET outerLanePlaneCount
 		mov edx,OFFSET outerLanePlanePlayer
-		;¼ÓÔØµ±Ç°·É»úµÄPosition
+		;åŠ è½½å½“å‰é£æœºçš„Position
 		mov eax,0
 		mov al,[esi].PiecePosition.Position
-		;ediÎªÍâÈ¦¼ÇÂ¼µÄ¶ÔÓ¦Î»ÖÃµÄ¸öÊı edxÎªÄÇ¸öÎ»ÖÃµÄÑÕÉ«
+		;ediä¸ºå¤–åœˆè®°å½•çš„å¯¹åº”ä½ç½®çš„ä¸ªæ•° edxä¸ºé‚£ä¸ªä½ç½®çš„é¢œè‰²
 		add edi,eax
 		add edx,eax
 		.if (BYTE PTR [edi] == 0)
-			;¸öÊı±äÎª1
+			;ä¸ªæ•°å˜ä¸º1
 			mov BYTE PTR[edi],1
-			;Íæ¼ÒĞòºÅÖÃÎªµ±Ç°Íæ¼ÒµÄĞòºÅ
+			;ç©å®¶åºå·ç½®ä¸ºå½“å‰ç©å®¶çš„åºå·
 			mov ah,[esi].PiecePosition.Player
 			mov BYTE PTR[edx],ah
 		.else ;BYTE PTR [edi] >= 1
@@ -719,23 +723,23 @@ setCurrentPlane PROC USES eax edx edi esi currentPiece:DWORD
 		.endif
 	.elseif ([esi].PiecePosition.Lane == 3)
 		mov edi,OFFSET innerLanePlaneCount
-		;¼ÓÔØµ±Ç°·É»úµÄPosition
+		;åŠ è½½å½“å‰é£æœºçš„Position
 		mov eax,0
 		mov al,[esi].PiecePosition.Position
-		;ediÎªÍâÈ¦¼ÇÂ¼µÄ¶ÔÓ¦Î»ÖÃ edxÎªÄÇ¸öÎ»ÖÃµÄÑÕÉ«
+		;ediä¸ºå¤–åœˆè®°å½•çš„å¯¹åº”ä½ç½® edxä¸ºé‚£ä¸ªä½ç½®çš„é¢œè‰²
 		add edi,eax
 
-		;¶ÔÓ¦Î»ÖÃ¸öÊı+1
+		;å¯¹åº”ä½ç½®ä¸ªæ•°+1
 		add BYTE PTR [edi],1	
 	.endif
 	ret
 setCurrentPlane ENDP
 
 composeBuffer PROC USES eax ecx esi currentPiece:DWORD
-    invoke Sleep, 500
+    invoke Sleep, SLEEP_TIME
 	mov esi,currentPiece
 
-	;×éÖ¯bufferµÄĞÅÏ¢
+	;ç»„ç»‡bufferçš„ä¿¡æ¯
 	mov _sbuf[0],'U'
 	mov _sbuf[1],' '
 	mov al,[esi].PiecePosition.Player
@@ -754,20 +758,25 @@ composeBuffer PROC USES eax ecx esi currentPiece:DWORD
     invoke crt_printf, addr _sendDisplayFormat, addr _sbuf
 	pop ecx
 
-	;·¢ËÍ
+	;å‘é€
     invoke _Broadcast
 
 	ret
 composeBuffer ENDP
 
-nextPlayer PROC
-	.if (currentPlayer == MAX_SOCK - 1)
+nextPlayer PROC uses eax
+    xor eax, eax
+    mov al, _maxSock
+    dec al
+
+	;.if (currentPlayer == _maxSock - 1)
+    .if currentPlayer == eax
 		mov currentPlayer,0
 	.else
 		add currentPlayer,1
 	.endif		
 	
-	;ÖØÖÃµ±Ç°µÄ÷»×ÓÊı
+	;é‡ç½®å½“å‰çš„éª°å­æ•°
 	mov currentStep,0
 	ret 
 nextPlayer ENDP
@@ -776,7 +785,7 @@ testWin PROC USES eax ecx esi edi currentPiece:DWORD
 	mov esi,currentPiece
 	mov edi,OFFSET chessBoard
 
-	;Ñ­»·Íæ¼ÒĞòºÅ´Î
+	;å¾ªç¯ç©å®¶åºå·æ¬¡
 	mov ecx,0
 	mov cl,[esi].PiecePosition.Player
 
@@ -787,7 +796,7 @@ testWin PROC USES eax ecx esi edi currentPiece:DWORD
 	.endif
 	
 	mov dl,1
-	;ediÎªµ±Ç°Íæ¼ÒµÚÒ»¸ö·É»úµÄÎ»ÖÃ
+	;ediä¸ºå½“å‰ç©å®¶ç¬¬ä¸€ä¸ªé£æœºçš„ä½ç½®
 
 	mov ecx,4
 checkLoop:
@@ -808,7 +817,7 @@ composeWinBuffer PROC USES eax
 	mov _sbuf[1],' '
 	mov _sbuf[2],al
 
-	;·¢ËÍ
+	;å‘é€
     invoke _Broadcast
 
 	ret
@@ -861,14 +870,14 @@ _RecvData PROC, sock
     invoke _Decode
     invoke crt_printf, addr _recvDisplayFormat, addr _rbuf
     invoke parseCommand
-    invoke Sleep, 500
+    invoke Sleep, SLEEP_TIME
     ret
 _RecvData ENDP
 
 _Broadcast PROC uses ebx ecx
     invoke _Encode
     xor ebx, ebx
-    .while bl < MAX_SOCK
+    .while bl < _maxSock
         invoke send, _sockList[ebx * 4], addr _sbuf, sizeof _sbuf, 0
         inc bl
     .endw
@@ -889,10 +898,10 @@ _HandleBegin PROC uses eax ebx
 _HandleBegin ENDP
 
 processCommand PROC USES eax ebx ecx edx esi 
-	;ÈÓ÷»×Ó
+	;æ‰”éª°å­
 	.if (verb=='R')
 		mov eax,0
-		;Ëæ»úÊıÉú³ÉÔÚeaxÖĞ
+		;éšæœºæ•°ç”Ÿæˆåœ¨eaxä¸­
 		invoke iRand,1,6
         ;mov eax, 6
         push eax
@@ -903,7 +912,7 @@ processCommand PROC USES eax ebx ecx edx esi
             mov _rollAgain, 0
         .endif
 
-		;×éÖ¯»Ø¸´Óï¾ä
+		;ç»„ç»‡å›å¤è¯­å¥
 		invoke _ClearS
 
 	    mov _sbuf[0], 'D'
@@ -915,11 +924,11 @@ processCommand PROC USES eax ebx ecx edx esi
 
         invoke _Broadcast
 
-		;¼ÇÂ¼µ±Ç°µÄ²½Êı
+		;è®°å½•å½“å‰çš„æ­¥æ•°
         pop currentStep
 		;mov currentStep,eax
 
-		;ÅĞ¶ÏÒ»ÏÂµ±Ç°Íæ¼ÒÓĞÃ»ÓĞÄÜ×ßµÄ dl = 1ÓĞµÄÄÜ×ß dl = 0Ã»ÓĞÄÜ×ßµÄ
+		;åˆ¤æ–­ä¸€ä¸‹å½“å‰ç©å®¶æœ‰æ²¡æœ‰èƒ½èµ°çš„ dl = 1æœ‰çš„èƒ½èµ° dl = 0æ²¡æœ‰èƒ½èµ°çš„
         invoke testCanMove
 
         .if (dl == 1)
@@ -934,7 +943,7 @@ processCommand PROC USES eax ebx ecx edx esi
             mov canMoveFlag,0
         .endif
 
-	;ÒÆ¶¯	
+	;ç§»åŠ¨	
 	.elseif (verb=='M')
         ; reply
         ;mov _sbuf[0], 'M'
@@ -951,7 +960,7 @@ processCommand PROC USES eax ebx ecx edx esi
 		remainStep = currentStep
 
 		mov esi,OFFSET chessBoard
-		;ÕÒµ½µ±Ç°²Ù×÷µÄÍæ¼Ò
+		;æ‰¾åˆ°å½“å‰æ“ä½œçš„ç©å®¶
 		mov ecx,currentPlayer
 		.if (ecx > 0)
 L1:
@@ -959,7 +968,7 @@ L1:
 			loop L1
 		.endif 
 
-		;ÕÒµ½¸ÃÍæ¼Ò²Ù×÷µÄÆå×Ó
+		;æ‰¾åˆ°è¯¥ç©å®¶æ“ä½œçš„æ£‹å­
 		mov ecx,currentPlane
 		.if (ecx > 0)
 L2:
@@ -968,30 +977,30 @@ L2:
 		.endif
 
 		mov al,[esi].PiecePosition.Lane
-		.if ([esi].PiecePosition.Lane > 0 && [esi].PiecePosition.Lane <= 3) ;ÔÚÓÎÏ·ÇøÄÚ²¿
-			;°ÑÕâ¸ö·É»úÄÃÆğ
+		.if ([esi].PiecePosition.Lane > 0 && [esi].PiecePosition.Lane <= 3) ;åœ¨æ¸¸æˆåŒºå†…éƒ¨
+			;æŠŠè¿™ä¸ªé£æœºæ‹¿èµ·
 			invoke pickCurrentPlane,esi
 
-			;Ñ­»·ÒÆ¶¯·É»ú
+			;å¾ªç¯ç§»åŠ¨é£æœº
 			mov ecx,remainStep
 			MoveStep:
-				;ÏòÇ°ÒÆ¶¯Ò»²½
+				;å‘å‰ç§»åŠ¨ä¸€æ­¥
 				invoke moveOneStep,esi
-				;¼ì²éÊÇ²»ÊÇ×ßµ½ÁËÇ½ÉÏ
+				;æ£€æŸ¥æ˜¯ä¸æ˜¯èµ°åˆ°äº†å¢™ä¸Š
 				invoke checkBlock,esi
 				loop MoveStep
-			;²âÊÔÊÇ²»ÊÇ×ßµ½ÖÕµã
+			;æµ‹è¯•æ˜¯ä¸æ˜¯èµ°åˆ°ç»ˆç‚¹
 			invoke checkIntoDestination,esi
-			;±£Ö¤²»ÊÇ×ßµ½ÁËÇ½ÉÏ (ÒÆ¶¯Ò»²½)
+			;ä¿è¯ä¸æ˜¯èµ°åˆ°äº†å¢™ä¸Š (ç§»åŠ¨ä¸€æ­¥)
 			invoke secureNotOnBlock,esi
 
-			;»÷É±ÆäËûµÄ·É»ú ÌøÔ¾ºÍ½İ¾¶
+			;å‡»æ€å…¶ä»–çš„é£æœº è·³è·ƒå’Œæ·å¾„
 			invoke jumpAndShortCut,esi
 			
-			;°ÑÕâ¸ö·É»ú·ÅÏÂ
+			;æŠŠè¿™ä¸ªé£æœºæ”¾ä¸‹
 			invoke setCurrentPlane,esi
 
-			;¼ì²éÊÇ²»ÊÇÒÑ¾­Ê¤Àû dl = 1 ÒÑ¾­Ê¤Àû dl = 0 ÉĞÎ´Ê¤Àû
+			;æ£€æŸ¥æ˜¯ä¸æ˜¯å·²ç»èƒœåˆ© dl = 1 å·²ç»èƒœåˆ© dl = 0 å°šæœªèƒœåˆ©
 			invoke testWin,esi
 			
 			.if (dl == 1)
@@ -999,15 +1008,15 @@ L2:
 			.endif
 
 		.elseif ([esi].PiecePosition.Lane == 0 && currentStep == 6)
-			;ÒÆ³öµ½×¼±¸Çø
+			;ç§»å‡ºåˆ°å‡†å¤‡åŒº
 			invoke moveOut,esi
 		.endif
 		
-		;ÖØÖÃµ±Ç°µÄ·½Ïò
+		;é‡ç½®å½“å‰çš„æ–¹å‘
 		mov currentDirection,0
-        mov canMoveFlag,1
+        mov canMoveFlag,0
 
-		;ÒÆ¶¯Íê³É£¬ÏÂÒ»¸öÍæ¼Ò½øĞĞ²Ù×÷
+		;ç§»åŠ¨å®Œæˆï¼Œä¸‹ä¸€ä¸ªç©å®¶è¿›è¡Œæ“ä½œ
 		;call nextPlayer
 	.endif
 Quit:
@@ -1042,7 +1051,7 @@ _InitServer PROC USES eax ebx esi
 
     ; connect
     mov ebx, 0
-    .while ebx < MAX_SOCK
+    .while bl < _maxSock
         invoke accept, _hListenSock, NULL, NULL
         .continue .if eax == INVALID_SOCKET
         mov _sockList[ebx * 4], eax
@@ -1058,7 +1067,7 @@ _InitServer ENDP
 _Prepare PROC USES eax ebx esi
     mov ebx, 0
     xor esi, esi
-    .while ebx < MAX_SOCK
+    .while bl < _maxSock
         ; send(P i)
         invoke RtlZeroMemory, addr _sbuf, sizeof _sbuf
         
@@ -1094,9 +1103,9 @@ _ConsoleMain PROC USES eax ebx edx esi edi
 
         xor ebx, ebx
         ;xor edi, edi
-        .while bl < MAX_SOCK
+        .while bl < _maxSock
 
-            invoke Sleep, 500
+            invoke Sleep, SLEEP_TIME
             
             ; send("R i")
             invoke _HandleBegin
@@ -1123,10 +1132,10 @@ _ConsoleMain PROC USES eax ebx edx esi edi
             invoke processCommand
 
 PNextPlayer:
-            ;.if _rollAgain == 0
+            .if _rollAgain == 0
                 invoke nextPlayer
                 inc bl
-            ;.endif
+            .endif
         .endw
 
         ;.break ; for test
@@ -1144,6 +1153,11 @@ main PROC
     ;mov al, BYTE PTR currentPlayer
 
     ;;.
+    .while TRUE
+        invoke crt_scanf, addr _inputFormat, addr _maxSock
+        sub _maxSock, 48
+        .break .if _maxSock > 0 && _maxSock <= 4
+    .endw
     
     invoke _ConsoleMain
     invoke ExitProcess, NULL

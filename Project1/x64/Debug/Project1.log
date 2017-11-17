@@ -1,0 +1,19 @@
+﻿  Assembling s16.asm...
+s16.asm(2): error A2008: syntax error : .
+s16.asm(3): error A2008: syntax error : .
+C:\masm32\include\windows.inc(9750): error A2008: syntax error : dword
+C:\masm32\include\windows.inc(10183): error A2008: syntax error : frame
+C:\masm32\include\windows.inc(16333): error A2008: syntax error : dword
+C:\masm32\include\windows.inc(18862): error A2008: syntax error : Frame
+C:\masm32\include\winextra.inc(11052): error A2026: constant expected
+C:\masm32\include\winextra.inc(11053): error A2026: constant expected
+s16.asm(71): error A2008: syntax error : ,
+s16.asm(125): error A2008: syntax error : ecx
+s16.asm(148): error A2008: syntax error : if
+s16.asm(149): error A2008: syntax error : if
+s16.asm(151): error A2008: syntax error : .
+s16.asm(155): error A2008: syntax error : .
+s16.asm(156): error A2008: syntax error : .
+s16.asm(159): error A2008: syntax error : .
+s16.asm(162): fatal error A1010: unmatched block nesting : init
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\BuildCustomizations\masm.targets(50,5): error MSB3721: 命令“ml64.exe /c /nologo /Zi /Fo"x64\Debug\s16.obj" /W3 /errorReport:prompt  /Tas16.asm”已退出，返回代码为 1。
